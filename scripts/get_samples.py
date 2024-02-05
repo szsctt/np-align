@@ -21,8 +21,9 @@ def check_samples(samples):
         
     #check that the same reference name always corresponds to the same parent file
     if len(samples.groupby(['reference_name', 'reference_file'])) != len(samples.groupby('reference_name')):
-        raise Exception("Each reference name (column 'reference_name') must always correspond to the same reference file (column 'reference_file')")
-
+        raise ValueError("Each reference name (column 'reference_name') must always correspond to the same reference file (column 'reference_file')")
+    if len(samples.groupby(['reference_name', 'reference_file'])) != len(samples.groupby('reference_file')):
+        raise ValueError("Each reference name (column 'reference_name') must always correspond to the same reference file (column 'reference_file')")
     # check reference files exist
     for reference_file in samples['reference_file']:
         if not os.path.exists(reference_file):
@@ -30,13 +31,13 @@ def check_samples(samples):
         
     # check that combinations of sample names and reference names are unique
     if len(samples.groupby(['sample', 'reference_name'])) != len(samples):
-        raise Exception("Each combination of sample name (column 'sample') and reference name (column 'reference_name') must be unique")
+        raise ValueError("Each combination of sample name (column 'sample') and reference name (column 'reference_name') must be unique")
         
     # optional columns
     # check that sequencing technology is either 'np',  'pb', or 'pb-hifi'
     if 'seq_tech' in samples.columns:
         if not set(samples['seq_tech']).issubset(set(['np',  'pb', 'pb-hifi'])):
-            raise Exception("Sequencing technology (column 'seq_tech') must be one of 'np', 'pb-hifi' or 'pb'")
+            raise ValueError("Sequencing technology (column 'seq_tech') must be one of 'np', 'pb-hifi' or 'pb'")
     else:
         # assume nanopore data
         samples['seq_tech'] = DEFAULT_SEQ_TECH
@@ -47,12 +48,14 @@ def check_samples(samples):
     else:
         samples['minimap2_args'] = DEFAULT_MINIMAP2_ARGS
 
+    return samples
+
 
 
 def get_samples(config):
 
     if 'samples' not in config:
-        raise ValueError('No samples found in config file')
+        raise ValueError("Please specify a samples file using '--config samples=<path to samples file>'")
     
     # check file extension to determine separator
     ext = os.path.splitext(config['samples'])[1]
@@ -66,6 +69,6 @@ def get_samples(config):
     # read samples file
     samples = pd.read_csv(config['samples'], sep=sep)
 
-    check_samples(samples)
+    samples = check_samples(samples)
 
     return samples
