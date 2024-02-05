@@ -21,7 +21,7 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           generate-run-shell: true
-          environment-file: tests/envs/test.yml
+          environment-file: tests/envs/pytest.yml
           environment-name: pybio
           
       - run: |
