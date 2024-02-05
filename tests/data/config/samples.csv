@@ -1,0 +1,2 @@
+sample,read_file,reference_name,reference_file,seq_tech,minimap2_args
+np-aav2,tests/data/reads/np-aav2.fastq,AAV2,tests/data/references/AAV2.fa,np,
