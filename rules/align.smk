@@ -35,6 +35,7 @@ rule align_minimap2:
         threads = lambda wildcards, threads: f"-T {threads}"
     log: "out/logs/align_minimap2/{sample}.{reference}.log"
     container: "docker://quay.io/biocontainers/minimap2:2.26--he4a0461_2"
+    conda: "../envs/map.yml"
     threads: 8
     shell:
         "minimap2 {params} {input.reference} {input.reads} > {output.aln}"
@@ -46,6 +47,7 @@ rule sort_sam:
         bam = "out/align/{sample}.{reference}.bam"
     log: "out/logs/sort_sam/{sample}.{reference}.log"
     container: "docker://quay.io/biocontainers/samtools:1.19.2--h50ea8bc_0"
+    conda: "../envs/map.yml"
     shell:
         "samtools sort -o {output.bam} {input.sam}"
 
@@ -56,5 +58,6 @@ rule index_bam:
         bai = "out/align/{sample}.{reference}.bam.bai"
     log: "out/logs/index_bam/{sample}.{reference}.log"
     container: "docker://quay.io/biocontainers/samtools:1.19.2--h50ea8bc_0"
+    conda: "../envs/map.yml"
     shell:
         "samtools index {input.bam}"
