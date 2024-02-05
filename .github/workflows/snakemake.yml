@@ -31,6 +31,6 @@ jobs:
         with:
           directory: '.'
           snakefile: 'Snakefile'
-          args: '--cores 1 --use-singularity'
+          args: '--cores 1 --use-singularity --config tests/data/config/samples.csv'
           
 
